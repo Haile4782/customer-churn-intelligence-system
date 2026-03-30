@@ -1,13 +1,25 @@
-import pandas as pd
+import pandas as pd 
 import joblib
 
 model = joblib.load("models/churn_model.pkl")
 
+# List of columns used in training
+FEATURE_COLUMNS = [
+    "CreditScore", "Age", "Tenure", "Balance", "NumOfProducts",
+    "HasCrCard", "IsActiveMember", "EstimatedSalary",
+    "Geography_France", "Geography_Germany", "Geography_Spain",
+    "Gender_Female", "Gender_Male"
+]
+
 def predict_customer(data_dict):
     df = pd.DataFrame([data_dict])
+    # Ensure all columns are present
+    for col in FEATURE_COLUMNS:
+        if col not in df.columns:
+            df[col] = 0
+    df = df[FEATURE_COLUMNS]  # order columns
     prediction = model.predict(df)[0]
     return prediction
-
 
 # Example test
 if __name__ == "__main__":

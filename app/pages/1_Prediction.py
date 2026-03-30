@@ -39,7 +39,7 @@ if st.button("Predict"):
 # Download predictions
 if st.button("Download Predictions"):
     df = pd.read_csv("data/churn_modelling.csv")
-    X = pd.get_dummies(df, columns=["Geography", "Gender"], drop_first=False)
+    X = pd.get_dummies(df, columns=["Geography", "Gender"], drop_first=True)
     X = X[FEATURE_COLUMNS]  # reorder columns
     df["Prediction"] = model.predict(X)
     st.download_button("Download CSV", df.to_csv(index=False), "predictions.csv")

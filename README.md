@@ -145,4 +145,7 @@ streamlit run app/main.py
 ## 👨‍💻 Author
 
 **Haiyleyesus Abayneh Belay**
+
+```text
 Engineering Data Analyst | Machine Learning Enthusiast
+```

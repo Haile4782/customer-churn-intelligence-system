@@ -6,7 +6,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Dark mode styling
+# Dark theme
 st.markdown("""
 <style>
 body { background-color: #0E1117; color: white; }
@@ -15,11 +15,11 @@ body { background-color: #0E1117; color: white; }
 
 st.title("🏦 Customer Churn Intelligence System")
 
-st.markdown("""
-Welcome to a full **AI-powered churn analytics platform**:
+st.info("⏳ If app is slow, it may be waking up from sleep (free hosting).")
 
+st.markdown("""
+### 🚀 Features:
 - 🔮 Prediction
 - 📊 Analytics
 - 🧠 Explainable AI (SHAP)
-- 📈 Power BI Integration
 """)

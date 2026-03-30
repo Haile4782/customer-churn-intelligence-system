@@ -1,17 +1,18 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import shap
 
 st.title("🔮 Churn Prediction")
 
-# Load model
 model = joblib.load("models/churn_model.pkl")
 
-# User inputs
+# Inputs
 age = st.slider("Age", 18, 80)
 balance = st.number_input("Balance", value=50000)
 credit = st.slider("Credit Score", 300, 900)
 
+# Input dataframe (MATCH TRAINING)
 input_df = pd.DataFrame({
     "CreditScore": [credit],
     "Age": [age],
@@ -21,25 +22,29 @@ input_df = pd.DataFrame({
     "HasCrCard": [1],
     "IsActiveMember": [1],
     "EstimatedSalary": [50000],
-    "Geography_France": [0],
     "Geography_Germany": [0],
-    "Geography_Spain": [1],  # Example default
-    "Gender_Female": [0],
-    "Gender_Male": [1]
+    "Geography_Spain": [1],
+    "Gender_Male": [1],
+    "Balance_per_Product": [balance / (1 + 1)],
+    "Age_Group": [age // 10]
 })
 
-# Make sure columns match model
 FEATURE_COLUMNS = model.get_booster().feature_names
 input_df = input_df[FEATURE_COLUMNS]
 
+# Prediction
 if st.button("Predict"):
     prob = model.predict_proba(input_df)[0][1]
     st.metric("Churn Probability", f"{prob*100:.2f}%")
 
-# Download predictions
-if st.button("Download Predictions"):
-    df = pd.read_csv("data/churn_modelling.csv")
-    X = pd.get_dummies(df, columns=["Geography", "Gender"], drop_first=True)
-    X = X[FEATURE_COLUMNS]  # reorder columns
-    df["Prediction"] = model.predict(X)
-    st.download_button("Download CSV", df.to_csv(index=False), "predictions.csv")
+# SHAP explanation
+if st.button("Explain Prediction"):
+    explainer = shap.Explainer(model)
+    shap_val = explainer(input_df)
+
+    shap_df = pd.DataFrame({
+        "Feature": input_df.columns,
+        "Impact": shap_val.values[0]
+    }).sort_values(by="Impact", key=abs, ascending=False)
+
+    st.bar_chart(shap_df.set_index("Feature"))
